@@ -2,30 +2,50 @@ package io.github.dataunitylab.jsonoid.server
 
 import scala.collection.mutable.Map
 
-import io.github.dataunitylab.jsonoid.discovery.DiscoverSchema
-import io.github.dataunitylab.jsonoid.discovery.schemas.{JsonSchema, ZeroSchema}
+import io.github.dataunitylab.jsonoid.discovery.{DiscoverSchema, JsonoidParams}
+import io.github.dataunitylab.jsonoid.discovery.schemas.{JsonSchema, PropertySets, ZeroSchema}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 
 
-case class SchemaName(name: String)
+case class SchemaParams(name: String, propSet: Option[String] = None)
 
 class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
   protected implicit val jsonFormats: Formats = DefaultFormats
   val schemas = Map.empty[String, JsonSchema[_]]
+  val jsonoidParams = Map.empty[String, JsonoidParams]
 
   before() {
     contentType = formats("json")
   }
 
   post("/schemas") {
-    val name = parsedBody.extract[SchemaName].name
-    if (schemas.contains(name)) {
+    val schemaParams = parsedBody.extract[SchemaParams]
+    if (schemas.contains(schemaParams.name)) {
       Conflict("error" -> "Schema already exists")
     } else {
-      schemas.put(name, ZeroSchema())
-      Created("status" -> "ok")
+      val maybePropSet = schemaParams.propSet match {
+        case Some("All") =>
+          Some(PropertySets.AllProperties)
+        case Some("Simple") =>
+          Some(PropertySets.SimpleProperties)
+        case Some("Min") =>
+          Some(PropertySets.MinProperties)
+        case Some(_) =>
+          None
+        case None =>
+          Some(PropertySets.AllProperties)
+      }
+
+      maybePropSet match {
+        case Some(propSet) =>
+          schemas.put(schemaParams.name, ZeroSchema())
+          jsonoidParams.put(schemaParams.name, JsonoidParams().withPropertySet(propSet))
+        Created("status" -> "ok")
+        case None =>
+          BadRequest("error" -> "Invalid property set")
+      }
     }
   }
 
@@ -41,10 +61,11 @@ class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
     val name = params("name")
     schemas.get(name) match {
       case Some(schema) =>
-        val newSchema = DiscoverSchema.discoverFromValue(parsedBody)
+        val p = jsonoidParams.get(name).get
+        val newSchema = DiscoverSchema.discoverFromValue(parsedBody)(p)
         newSchema match {
           case Some(newSchema) =>
-            schemas.put(name, schema.merge(newSchema))
+            schemas.put(name, schema.merge(newSchema)(p))
             Ok("status" -> "ok")
           case None =>
             BadRequest("error" -> "Invalid schema")
