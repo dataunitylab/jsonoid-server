@@ -2,11 +2,30 @@ import Dependencies._
 
 ThisBuild / scalaVersion := "2.13.10"
 ThisBuild / organization := "io.github.dataunitylab"
+ThisBuild / organizationName  := "Rochester Institute of Technology"
 
-lazy val hello = (project in file("."))
+val nonConsoleCompilerOptions = Seq(
+  "-feature",
+  "-Xfatal-warnings",
+  "-Ywarn-unused:imports",
+  "-deprecation",
+  "-release:8"
+)
+
+lazy val root = (project in file("."))
   .settings(
     name := "JSONoid Server",
     version := "0.1.0-SNAPSHOT",
+    homepage := Some(url("https://github.com/dataunitylab/jsonoid-server")),
+    licenses := List("MIT" -> url("http://opensource.org/licenses/MIT")),
+    developers := List(
+      Developer(
+        "michaelmior",
+        "Michael Mior",
+        "mmior@mail.rit.edu ",
+        url("https://michael.mior.ca")
+      )
+    ),
     libraryDependencies ++= Seq(
       scalatra,
       scalatraJson,
@@ -19,7 +38,16 @@ lazy val hello = (project in file("."))
 
       scalatraTest % Test,
     ),
+
+    scalacOptions ++= nonConsoleCompilerOptions,
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
   )
+
+scalafixOnCompile := true
+ThisBuild / scalafixDependencies += "net.pixiv" %% "scalafix-pixiv-rule" % "3.0.1"
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 enablePlugins(SbtTwirl)
 enablePlugins(JettyPlugin)

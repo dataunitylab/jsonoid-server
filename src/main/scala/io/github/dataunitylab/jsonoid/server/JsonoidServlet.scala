@@ -3,11 +3,14 @@ package io.github.dataunitylab.jsonoid.server
 import scala.collection.mutable.Map
 
 import io.github.dataunitylab.jsonoid.discovery.{DiscoverSchema, JsonoidParams}
-import io.github.dataunitylab.jsonoid.discovery.schemas.{JsonSchema, PropertySets, ZeroSchema}
+import io.github.dataunitylab.jsonoid.discovery.schemas.{
+  JsonSchema,
+  PropertySets,
+  ZeroSchema
+}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
-
 
 case class SchemaParams(name: String, propSet: Option[String] = None)
 
@@ -41,8 +44,11 @@ class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
       maybePropSet match {
         case Some(propSet) =>
           schemas.put(schemaParams.name, ZeroSchema())
-          jsonoidParams.put(schemaParams.name, JsonoidParams().withPropertySet(propSet))
-        Created("status" -> "ok")
+          jsonoidParams.put(
+            schemaParams.name,
+            JsonoidParams().withPropertySet(propSet)
+          )
+          Created("status" -> "ok")
         case None =>
           BadRequest("error" -> "Invalid property set")
       }
@@ -52,8 +58,8 @@ class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
   get("/schemas/:name") {
     val name = params("name")
     schemas.get(name) match {
-      case Some(schema) => Ok(schema.toJson)
-      case None => NotFound("error" -> "Schema not found")
+      case Some(schema) => Ok(schema.toJson())
+      case None         => NotFound("error" -> "Schema not found")
     }
   }
 

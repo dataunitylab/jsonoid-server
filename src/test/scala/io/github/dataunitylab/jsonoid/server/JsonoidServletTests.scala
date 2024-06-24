@@ -8,7 +8,7 @@ class JsonoidServletTests extends ScalatraFunSuite {
 
   test("POST /schemas on JsonoidServlet should return status 200") {
     post("/schemas", """{"name": "test", "propSet": "All"}""") {
-      status should equal (201)
+      status should equal(201)
     }
   }
 
