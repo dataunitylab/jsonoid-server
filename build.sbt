@@ -88,6 +88,11 @@ git.useGitDescribe := true
 ThisBuild / dynverSonatypeSnapshots := true
 ThisBuild / dynverSeparator := "-"
 
+docker / imageNames := Seq(
+  // Sets the latest tag
+  ImageName(s"michaelmior/jsonoid-server:latest"),
+)
+
 docker / dockerfile := {
   // The assembly task generates a fat JAR file
   val artifact: File = sbt.Keys.`package`.value
