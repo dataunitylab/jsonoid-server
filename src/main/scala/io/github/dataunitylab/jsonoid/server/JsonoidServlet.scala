@@ -23,6 +23,10 @@ class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
     contentType = formats("json")
   }
 
+  get("/status") {
+    Ok("status" -> "ok")
+  }
+
   post("/schemas") {
     val schemaParams = parsedBody.extract[SchemaParams]
     if (schemas.contains(schemaParams.name)) {

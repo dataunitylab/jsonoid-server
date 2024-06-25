@@ -78,6 +78,7 @@ ThisBuild / scalafixDependencies += "net.pixiv" %% "scalafix-pixiv-rule" % "3.0.
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+enablePlugins(DockerPlugin)
 enablePlugins(SbtTwirl)
 enablePlugins(JettyPlugin)
 
@@ -86,3 +87,15 @@ git.useGitDescribe := true
 
 ThisBuild / dynverSonatypeSnapshots := true
 ThisBuild / dynverSeparator := "-"
+
+docker / dockerfile := {
+  // The assembly task generates a fat JAR file
+  val artifact: File = sbt.Keys.`package`.value
+  val artifactTargetPath = s"/var/lib/jetty/webapps/ROOT.war"
+
+  new Dockerfile {
+    from("jetty:9.4-jre8-alpine")
+    add(artifact, artifactTargetPath)
+    expose(8080)
+  }
+}
