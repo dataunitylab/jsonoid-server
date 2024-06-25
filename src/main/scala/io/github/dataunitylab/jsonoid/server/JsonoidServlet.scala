@@ -12,12 +12,12 @@ import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 
-case class SchemaParams(name: String, propSet: Option[String] = None)
+final case class SchemaParams(name: String, propSet: Option[String] = None)
 
 class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
   protected implicit val jsonFormats: Formats = DefaultFormats
-  val schemas = Map.empty[String, JsonSchema[_]]
-  val jsonoidParams = Map.empty[String, JsonoidParams]
+  private val schemas = Map.empty[String, JsonSchema[_]]
+  private val jsonoidParams = Map.empty[String, JsonoidParams]
 
   before() {
     contentType = formats("json")
@@ -67,7 +67,10 @@ class JsonoidServlet extends ScalatraServlet with JacksonJsonSupport {
     val name = params("name")
     schemas.get(name) match {
       case Some(schema) =>
+        assert(jsonoidParams.contains(name))
+        @SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
         val p = jsonoidParams.get(name).get
+
         val newSchema = DiscoverSchema.discoverFromValue(parsedBody)(p)
         newSchema match {
           case Some(newSchema) =>

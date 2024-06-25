@@ -1,8 +1,9 @@
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.13.10"
-ThisBuild / organization := "io.github.dataunitylab"
-ThisBuild / organizationName  := "Rochester Institute of Technology"
+ThisBuild / scalaVersion     := "2.13.10"
+ThisBuild / versionScheme    := Some("early-semver")
+ThisBuild / organization     := "io.github.dataunitylab"
+ThisBuild / organizationName := "Rochester Institute of Technology"
 
 val nonConsoleCompilerOptions = Seq(
   "-feature",
@@ -44,6 +45,34 @@ lazy val root = (project in file("."))
     semanticdbVersion := scalafixSemanticdb.revision
   )
 
+Compile / compile / wartremoverErrors ++= Seq(
+  Wart.ArrayEquals,
+  Wart.EitherProjectionPartial,
+  Wart.Enumeration,
+  Wart.Equals,
+  Wart.ExplicitImplicitTypes,
+  Wart.FinalCaseClass,
+  Wart.FinalVal,
+  Wart.JavaConversions,
+  Wart.JavaSerializable,
+  Wart.LeakingSealed,
+  Wart.Null,
+  Wart.Option2Iterable,
+  Wart.OptionPartial,
+  Wart.Product,
+  Wart.PublicInference,
+  Wart.Recursion,
+  Wart.Return,
+  Wart.Serializable,
+  Wart.StringPlusAny,
+  Wart.ToString,
+  Wart.TripleQuestionMark,
+  Wart.TryPartial,
+  Wart.Var,
+  Wart.While,
+)
+
+
 scalafixOnCompile := true
 ThisBuild / scalafixDependencies += "net.pixiv" %% "scalafix-pixiv-rule" % "3.0.1"
 
@@ -51,3 +80,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 enablePlugins(SbtTwirl)
 enablePlugins(JettyPlugin)
+
+git.remoteRepo := "git@github.com:dataunitylab/jsonoid-server.git"
+git.useGitDescribe := true
+
+ThisBuild / dynverSonatypeSnapshots := true
+ThisBuild / dynverSeparator := "-"
