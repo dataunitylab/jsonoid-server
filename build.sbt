@@ -42,6 +42,7 @@ lazy val root = (project in file("."))
     dependencyOverrides ++= Seq(
       scalaXml,
     ),
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
 
     scalacOptions ++= nonConsoleCompilerOptions,
     semanticdbEnabled := true,
@@ -82,7 +83,6 @@ ThisBuild / scalafixDependencies += "net.pixiv" %% "scalafix-pixiv-rule" % "3.0.
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 enablePlugins(DockerPlugin)
-enablePlugins(SbtTwirl)
 enablePlugins(JettyPlugin)
 
 git.remoteRepo := "git@github.com:dataunitylab/jsonoid-server.git"
