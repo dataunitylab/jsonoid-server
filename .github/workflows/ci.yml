@@ -20,7 +20,13 @@ jobs:
         jvm: adopt:8
         apps: sbt scala
     - name: Test
-      run: sbt test
+      run: sbt coverage test coverageReport
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      if: ${{ github.actor != 'dependabot[bot]' }}
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
     - name: Clean up
       run: |
         rm -rf "$HOME/.ivy2/local" || true
