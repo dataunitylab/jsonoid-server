@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 import io.github.dataunitylab.jsonoid.server._
 import org.scalatra._
 import javax.servlet.ServletContext
@@ -7,3 +8,4 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new JsonoidServlet, "/*")
   }
 }
+// $COVERAGE-ON$
