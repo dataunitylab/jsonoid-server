@@ -17,5 +17,6 @@ object Dependencies {
   lazy val scalatraTest = "org.scalatra"           %% "scalatra-scalatest" % ScalatraVersion
 
   // Overrides
-  lazy val scalaXml     = "org.scala-lang.modules" %% "xcala-xml"          % "2.3.0"
+  // XXX For compatibility with scoverage
+  lazy val scalaXml     = "org.scala-lang.modules" %% "scala-xml"          % "2.3.0"
 }

@@ -42,7 +42,6 @@ lazy val root = (project in file("."))
     dependencyOverrides ++= Seq(
       scalaXml,
     ),
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
 
     scalacOptions ++= nonConsoleCompilerOptions,
     semanticdbEnabled := true,
