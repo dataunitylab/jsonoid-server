@@ -17,6 +17,8 @@ object Dependencies {
   lazy val scalatraTest = "org.scalatra"           %% "scalatra-scalatest" % ScalatraVersion
 
   // Overrides
+  // XXX Bundled version is vulnerable to CVE-2022-42889
+  lazy val commonsText  = "org.apache.commons"      % "commons-text"       % "1.10.0"
   // XXX For compatibility with scoverage
   lazy val scalaXml     = "org.scala-lang.modules" %% "scala-xml"          % "2.3.0"
 }
