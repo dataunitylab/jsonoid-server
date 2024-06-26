@@ -15,4 +15,7 @@ object Dependencies {
  
   // Test
   lazy val scalatraTest = "org.scalatra"           %% "scalatra-scalatest" % ScalatraVersion
+
+  // Overrides
+  lazy val scalaXml     = "org.scala-lang.modules" %% "xcala-xml"          % "2.3.0"
 }

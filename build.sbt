@@ -39,6 +39,9 @@ lazy val root = (project in file("."))
 
       scalatraTest % Test,
     ),
+    dependencyOverrides ++= Seq(
+      scalaXml,
+    ),
 
     scalacOptions ++= nonConsoleCompilerOptions,
     semanticdbEnabled := true,
