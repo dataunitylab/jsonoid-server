@@ -103,6 +103,12 @@ docker / dockerfile := {
 
   new Dockerfile {
     from("jetty:9.4-jre8-alpine")
+
+    // XXX Remove unnecessary curl to avoid warnings for CVEs
+    user("root")
+    run("apk", "del", "--no-cache", "curl")
+    user("jetty")
+
     add(artifact, artifactTargetPath)
     expose(8080)
   }
