@@ -1,0 +1,10 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+GET     /status                     controllers.JsonoidController.status()
+POST    /schemas                    controllers.JsonoidController.postSchema()
+DELETE  /schemas/:name              controllers.JsonoidController.deleteSchema(name: String)
+GET     /schemas/:name              controllers.JsonoidController.getSchema(name: String)
+PUT     /schemas/:name              controllers.JsonoidController.putSchema(name: String)
