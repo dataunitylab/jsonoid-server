@@ -1,20 +1,59 @@
-name := """jsonoid-server"""
-organization := "io.github.dataunitylab.jsonoid"
+import Dependencies._
 
-version := "1.0-SNAPSHOT"
+ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / organization := "io.github.dataunitylab"
+ThisBuild / organizationName := "Rochester Institute of Technology"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+inThisBuild(
+  List(
+    organization := "io.github.dataunitylab",
+    homepage := Some(url("https://github.com/dataunitylab/jsonoid-server")),
+    licenses := List("MIT" -> url("http://opensource.org/licenses/MIT")),
+    developers := List(
+      Developer(
+        "michaelmior",
+        "Michael Mior",
+        "mmior@mail.rit.edu ",
+        url("https://michael.mior.ca")
+      )
+    ),
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
+)
 
-scalaVersion := "2.13.16"
+scalafixOnCompile := true
+ThisBuild / scalafixDependencies += "net.pixiv" %% "scalafix-pixiv-rule" % "4.5.3"
 
-libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test
-libraryDependencies += "io.github.dataunitylab" %% "jsonoid-discovery"  % "0.30.1"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.17.1"
-libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.17.1"
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "io.github.dataunitylab.jsonoid.controllers._"
+val nonConsoleCompilerOptions = Seq(
+  "-feature",
+  "-Xfatal-warnings",
+  "-Ywarn-unused:imports",
+  "-Wconf:cat=unused-imports&site=<empty>:s", // Silence import warnings on Play `routes` files
+  "-Wconf:cat=unused-imports&site=router:s", // Silence import warnings on Play `routes` files
+  "-Wconf:cat=unused-imports&site=v1:s", // Silence import warnings on Play `v1.routes` files
+  "-Wconf:cat=unused-imports&site=v2:s", // Silence import warnings on Play `v2.routes` files
+  "-deprecation",
+  "-release:8"
+)
 
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "io.github.dataunitylab.jsonoid.binders._"
+lazy val root = (project in file("."))
+  .settings(
+    name := "jsonoid-server",
+    libraryDependencies ++= Seq(
+      guice,
+      jacksonModule,
+      jacksonDatabind,
+      jsonoid,
+      testPlusPlay % Test,
+    ),
+    javacOptions ++= Seq("-source", "11", "-target", "11"),
+    scalacOptions ++= nonConsoleCompilerOptions,
+    buildInfoKeys := Seq[BuildInfoKey](version),
+    buildInfoPackage := "io.github.dataunitylab.jsonoid.server"
+  )
+
+enablePlugins(PlayScala)
