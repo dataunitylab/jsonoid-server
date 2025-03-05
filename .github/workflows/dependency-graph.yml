@@ -1,0 +1,16 @@
+name: Update Dependency Graph
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-graph:
+    name: Update Dependency Graph
+    runs-on: blacksmith-2vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: scalacenter/sbt-dependency-submission@v3
