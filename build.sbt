@@ -57,3 +57,17 @@ lazy val root = (project in file("."))
   )
 
 enablePlugins(PlayScala)
+
+ThisBuild / assemblyShadeRules := Seq(
+  ShadeRule.rename("org.apache.commons.logging.**" -> "shadelogging.@1").inAll
+)
+
+assembly / assemblyMergeStrategy := {
+  case "module-info.class"                     => MergeStrategy.discard
+  case "META-INF/versions/9/module-info.class" => MergeStrategy.discard
+  case PathList("shadelogging", xs @ _*)       => MergeStrategy.discard
+  case "play/reference-overrides.conf"         => MergeStrategy.concat
+  case x =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
+}
