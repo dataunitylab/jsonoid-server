@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-03-06
+### Fixed
+- Properly create release
+
 ## [0.1.0] - 2025-03-06
 ### Added
 - Initial release with basic JSON schema discovery
 
-[Unreleased]: https://github.com/dataunitylab/jsonoid-discovery/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/dataunitylab/jsonoid-discovery/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/dataunitylab/jsonoid-discovery/releases/tag/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/dataunitylab/jsonoid-discovery/releases/tag/v0.1.0
