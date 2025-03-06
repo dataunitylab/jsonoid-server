@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+jobs:
+  check:
+    runs-on: blacksmith-2vcpu-ubuntu-2204
+    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v') }}
+    outputs:
+      status: ${{ steps.check.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          persist-credentials: false
+      - id: check
+        name: Verify that the ref is a tag (and not just a branch starting with "v")
+        run: git show-ref --verify refs/tags/${{ github.event.workflow_run.head_branch }}
+
+  release:
+    runs-on: blacksmith-2vcpu-ubuntu-2204
+    needs: check
+    if: needs.check.outputs.status == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: taiki-e/install-action@parse-changelog
+      - name: Generate Changelog
+        run: parse-changelog CHANGELOG.md > ${{ github.workspace }}-CHANGELOG.md
+      - name: Download JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: jsonoid-server.jar
+          github-token: ${{ secrets.GH_PAT }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Make source archive
+        run: git archive --format tar.gz --prefix=jsonoid-server-${{ github.event.workflow_run.head_branch }}/ HEAD > jsonoid-server-${{ github.event.workflow_run.head_branch }}.tar.gz
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ github.workspace }}-CHANGELOG.md
+          files: |
+            jsonoid-server*.jar
+            jsonoid-server-*.tar.gz
+          fail_on_unmatched_files: true
+          tag_name: ${{ github.event.workflow_run.head_branch }}
